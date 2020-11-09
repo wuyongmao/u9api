@@ -6,6 +6,7 @@ import com.ruoyi.common.utils.IpUtils;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.exception.ErrorInfoException;
+import com.ruoyi.utils.CommonUtils;
 import com.ruoyi.web.business.U9ApiBusiness;
 import com.ruoyi.web.vo.LoginValidVO;
 import io.swagger.annotations.ApiOperation;
@@ -43,8 +44,10 @@ public class ApiController extends BaseController {
     @GetMapping("/hello")
     @ResponseBody
     public Object hello() {
-        U9ApiBusiness u9ApiBusiness=new U9ApiBusiness();
-        u9ApiBusiness.a();
+//        U9ApiBusiness u9ApiBusiness=new U9ApiBusiness();
+//        u9ApiBusiness.a();
+        CommonUtils.WriteLog("u9api","hello","request","start");
+        CommonUtils.WriteLog("u9api","hello","request","end");
         return "Hello ";
     }
     @PostMapping("/valid")
