@@ -9,7 +9,7 @@ import java.io.RandomAccessFile;
 public class CommonUtils {
     public static void WriteLog(String className, String functionName, String title, String content) {
         String result = String.format("[%s]%s%s%s%s", title, DateUtils.dateTimeNow("yyyy-MM-dd HH:mm:ss"),
-                Constant.NewLine, content, Constant.NewLine);
+                U9Constant.NewLine, content, U9Constant.NewLine);
         String rootFile = System.getProperty("user.dir") + "\\" + "CustLog" + "\\" + className + "\\" + functionName;
 
 

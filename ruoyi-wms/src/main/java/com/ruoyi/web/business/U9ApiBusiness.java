@@ -1,155 +1,181 @@
 package com.ruoyi.web.business;
 
-import com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfanyTypeanyType;
-import com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfanyTypeanyType.KeyValueOfanyTypeanyType;
-import exceptions.ubf.ufsoft.ArrayOfMessageBase;
-import org.datacontract.schemas._2004._07.ufsoft_ubf_pl.ObjectState;
-import org.ufida.entitydata.*;
+import icreateshipsv.com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfanyTypeanyType;
+import icreateshipsv.com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfanyTypeanyType.KeyValueOfanyTypeanyType;
+import icreateshipsv.org.datacontract.schemas._2004._07.ufsoft_ubf_pl.ObjectState;
+import icreateshipsv.org.tempuri.CreateShipSVStub;
+import icreateshipsv.org.ufida.*;
+import icreateshipsv.org.ufida.entitydata.ObjectFactory;
+import icreateshipsv.org.ufida.entitydata.*;
+import u9api.domain.ContextParam;
+import u9api.domain.ErpShip;
+import u9api.domain.ErpShipLine;
+import u9api.utils.DateUtil;
+import u9api.utils.DomainUtils;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.Holder;
 import java.math.BigDecimal;
-import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class U9ApiBusiness {
-    public  void a() {
+    public static String CreateShipSVStub()  throws Exception {
+        icreateshipsv.org.tempuri.CreateShipSVStub shipSVStub = new CreateShipSVStub();
+        UFIDAU9ISVSMICreateShipSV sv = shipSVStub.getBasicHttpBindingUFIDAU9ISVSMICreateShipSV();
+        ContextParam contextParam = DomainUtils.getDefultContextParamInstance2();
+        Object context = createContext(contextParam);
+        ArrayOfUFIDAU9ISVSMShipDTOForIndustryChainData shipDTOs = createShipDTOs(
+                DomainUtils.getDefultErpShipInstance2());
+        Holder<icreateshipsv.org.ufida.entitydata.ArrayOfUFIDAU9ISVSMDocKeyDTOData> doResult = new Holder<icreateshipsv.org.ufida.entitydata.ArrayOfUFIDAU9ISVSMDocKeyDTOData>();
+        Holder<icreateshipsv.exceptions.ubf.ufsoft.ArrayOfMessageBase> outMessages = new Holder<icreateshipsv.exceptions.ubf.ufsoft.ArrayOfMessageBase>();
 
-        // 创建当前上下文（相当于验证信息，这部分需灵活配置）
-        String IDForCompany = "001";// 当前企业编号
-        Long IDForOrganization = new Long("1001603310110008");// 当前组织ID
-        Long IDForUsers = new Long("1001710190003440");// 当前用户ID
-        String UserCode = "dwc";// 当前用户编码
-        // 创建上下文环境
-        Object context = createContext(IDForCompany, IDForOrganization, IDForUsers, UserCode);
-        org.tempuri.CreateRCVSRVStub createRcvsvclient;
-        createRcvsvclient = new org.tempuri.CreateRCVSRVStub();
-        org.ufida.UFIDAU9ISVRCVICreateRCVSRV createsv = createRcvsvclient
-                .getBasicHttpBindingUFIDAU9ISVRCVICreateRCVSRV();
+        System.out.println("Invoke start ...");
+        sv._do(context, shipDTOs, false, doResult, outMessages);
+        System.out.println("Invoke end ...");
 
-        // 给头、明细赋值
-        org.ufida.entitydata.ArrayOfUFIDAU9ISVRCVDTOOBAReceivementDTOData rCVList = createRCVList();
-
-        // doResult就是返回结果。
-        Holder<org.ufida.entitydata.ArrayOfUFIDAU9PMRcvReceivementData> doResult = new Holder<ArrayOfUFIDAU9PMRcvReceivementData>();
-        Holder<exceptions.ubf.ufsoft.ArrayOfMessageBase> outMessages = new Holder<ArrayOfMessageBase>();
-        try {
-            System.out.println("Invoke start ...");
-            // 将入库单内容传入ERP（入和返的值，均作为此方法的参数）。
-            // context验证信息，rCVList入的值，doResult方法返回值，
-            createsv._do(context, rCVList, doResult, outMessages);
-            System.out.println("Invoke end ...");
-        } catch (Exception ex) {
-            System.out.println("Error..");
-            System.out.println(ex.getMessage());
-            System.out.println(ex.getClass().toString());
-            System.out.println(ex.getStackTrace().toString());
-
+        StringBuilder stringBuilder=new StringBuilder();
+        for (int i = 0; i < doResult.value.getUFIDAU9ISVSMDocKeyDTOData().size(); i++) {
+            String msg ="创建成功!出货单单号:"
+                    + doResult.value.getUFIDAU9ISVSMDocKeyDTOData().get(i).getMDocNO().getValue();
+            stringBuilder.append(msg).append("\r\n");
+            System.out.println(msg);
         }
+        return stringBuilder.toString();
+    }
 
+    public static ArrayOfUFIDAU9ISVSMShipDTOForIndustryChainData createShipDTOs(ErpShip erpShip) {
+
+        ObjectFactory objectFactory = new ObjectFactory();
+        ArrayOfUFIDAU9ISVSMShipDTOForIndustryChainData shipDTOs = objectFactory
+                .createArrayOfUFIDAU9ISVSMShipDTOForIndustryChainData();
+        UFIDAU9ISVSMShipDTOForIndustryChainData header = objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainData();
+        header.setSysState(ObjectState.INSERTED);
+        UFIDAU9CBOPubControllerCommonArchiveDataDTOData d1 = objectFactory
+                .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+        d1.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.DocumentType));
+        d1.setSysState(ObjectState.INSERTED);
+        header.setMDocumentType(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMDocumentType(d1));
+
+        UFIDAU9CBOPubControllerCommonArchiveDataDTOData d2 = objectFactory
+                .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+        d2.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.OrderByCode));
+        header.setMOrderBy(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMOrderBy(d2));
+
+        header.setMBusinessDate(DateUtil.getXMLGregorianCalendar2());
+
+        UFIDAU9CBOPubControllerCommonArchiveDataDTOData d3 = objectFactory
+                .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+        d3.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.TCCode));
+        header.setMTC(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMTC(d3));
+
+        UFIDAU9CBOPubControllerCommonArchiveDataDTOData d4 = objectFactory
+                .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+        d4.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.ACCode));
+        header.setMAC(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMAC(d4));
+
+        header.setMShipConfirmDate(DateUtil.getXMLGregorianCalendar2());
+
+        UFIDAU9CBOPubControllerCommonArchiveDataDTOData d5 = objectFactory
+                .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+        d5.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.WHCode));
+        header.setMWhSite(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMWhSite(d5));
+
+        UFIDAU9CBOPubControllerCommonArchiveDataDTOData d8 = objectFactory
+                .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+        d8.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.ConfirmAccordingCode));
+        header.setMConfirmAccording(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMConfirmAccording(d8));
+
+        header.setMSrcDocType(erpShip.SrcDocType);
+        header.setMConfirmMode(erpShip.ConfirmModel);
+
+        header.setMDemandCode(-1);
+
+        UFIDAU9CBOPubControllerCommonArchiveDataDTOData d6 = objectFactory
+                .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+        d6.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.SellerCode));
+        header.setMSeller(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMSeller(d6));
+
+        UFIDAU9CBOPubControllerCommonArchiveDataDTOData d7 = objectFactory
+                .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+        d7.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.CustBillCode));
+        header.setMBillToSite(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMBillToSite(d7));
+
+        header.setMPayerSite(header.getMBillToSite());
+
+        ArrayOfUFIDAU9ISVSMShipLineDTOForIndustryChainData shipLineArray = objectFactory
+                .createArrayOfUFIDAU9ISVSMShipLineDTOForIndustryChainData();
+
+        int RowNo = 0, RowStep = 10;
+        for (ErpShipLine erpShipLine : erpShip.ErpShipLines) {
+            UFIDAU9ISVSMShipLineDTOForIndustryChainData linedto = objectFactory
+                    .createUFIDAU9ISVSMShipLineDTOForIndustryChainData();
+            linedto.setSysState(ObjectState.INSERTED);
+            RowNo += RowStep;
+            linedto.setMDocLineNo(RowNo);
+
+            UFIDAU9CBOSCMItemItemInfoData d11 = objectFactory.createUFIDAU9CBOSCMItemItemInfoData();
+            d11.setMItemCode(objectFactory.createUFIDAU9CBOSCMItemItemInfoDataMItemCode(erpShipLine.ItemCode));
+            d11.setSysState(ObjectState.INSERTED);
+            linedto.setMItemInfo(objectFactory.createUFIDAU9ISVSMShipLineDTOForIndustryChainDataMItemInfo(d11));
+
+            linedto.setMShipQtyTUAmount(erpShipLine.ItemQty);
+            if (erpShipLine.ItemPrice.compareTo(BigDecimal.ZERO) <= 0) {
+                linedto.setMDonationType(0); // 免费类型
+            } else {
+                linedto.setMDonationType(-1);
+            }
+
+            linedto.setMWH(header.getMWhSite());
+
+            UFIDAU9CBOPubControllerCommonArchiveDataDTOData d12 = objectFactory
+                    .createUFIDAU9CBOPubControllerCommonArchiveDataDTOData();
+            d12.setMCode(objectFactory.createUFIDAU9BaseApplicationApplicationDataMCode(erpShip.WHMan));
+            d12.setSysState(ObjectState.INSERTED);
+            linedto.setMWhMan(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMBillToSite(d12));
+
+            linedto.setMOrderPrice(erpShipLine.ItemPrice);
+            linedto.setMOrderPriceTC(erpShipLine.ItemPrice);
+            linedto.setMFinallyPrice(erpShipLine.ItemPrice);
+            linedto.setMFinallyPriceTC(erpShipLine.ItemPrice);
+
+            linedto.setMShipTogetherFlag(-1); // KIT
+            linedto.setMDemandCode(-1); // 需求分类
+            linedto.setMStorageType(1); // 存储类型
+
+            // 立账位置
+            linedto.setMShipToSite(header.getMBillToSite());
+            linedto.setMBillToSite(header.getMBillToSite());
+            linedto.setMCreditObj(header.getMBillToSite());
+
+            linedto.setMConfirmAccording(header.getMConfirmAccording());
+            linedto.setMConfirmMode(header.getMConfirmMode());
+            linedto.setMInvoiceAccording(header.getMInvoiceAccording());
+
+            shipLineArray.getUFIDAU9ISVSMShipLineDTOForIndustryChainData().add(linedto);
+        }
+        header.setMShipLines(objectFactory.createUFIDAU9ISVSMShipDTOForIndustryChainDataMShipLines(shipLineArray));
+
+        shipDTOs.getUFIDAU9ISVSMShipDTOForIndustryChainData().add(header);
+        return shipDTOs;
     }
 
     // 创建上下文环境
-    private static Object createContext(String entid, long orgid, long userid, String usercode) {
-        org.datacontract.schemas._2004._07.ufsoft_ubf_util.ObjectFactory contextfactory = new org.datacontract.schemas._2004._07.ufsoft_ubf_util.ObjectFactory();
-        org.datacontract.schemas._2004._07.ufsoft_ubf_util.ThreadContext tc =
-                contextfactory.createThreadContext();
+    private static Object createContext(ContextParam contextParam) {
+        icreateshipsv.org.datacontract.schemas._2004._07.ufsoft_ubf_util.ObjectFactory contextfactory = new icreateshipsv.org.datacontract.schemas._2004._07.ufsoft_ubf_util.ObjectFactory();
+        icreateshipsv.org.datacontract.schemas._2004._07.ufsoft_ubf_util.ThreadContext tc = contextfactory.createThreadContext();
 
-        com.microsoft.schemas._2003._10.serialization.arrays.ObjectFactory arrayFactory = new com.microsoft.schemas._2003._10.serialization.arrays.ObjectFactory();
-        com.microsoft.schemas._2003._10.serialization.arrays.ArrayOfKeyValueOfanyTypeanyType contextarray =
-                arrayFactory.createArrayOfKeyValueOfanyTypeanyType();
+        icreateshipsv.com.microsoft.schemas._2003._10.serialization.arrays.ObjectFactory arrayFactory = new icreateshipsv.com.microsoft.schemas._2003._10.serialization.arrays.ObjectFactory();
+        ArrayOfKeyValueOfanyTypeanyType contextarray = arrayFactory.createArrayOfKeyValueOfanyTypeanyType();
 
-        ArrayOfKeyValueOfanyTypeanyType.KeyValueOfanyTypeanyType kv1 = new KeyValueOfanyTypeanyType();
-        kv1.setKey("EnterpriseID");
-        kv1.setValue(entid);// 填具体的企业编号
-        contextarray.getKeyValueOfanyTypeanyType().add(kv1);
-        KeyValueOfanyTypeanyType kv2 = new KeyValueOfanyTypeanyType();
-        kv2.setKey("OrgID");
-        kv2.setValue(orgid);// 填具体的组织ID
-        contextarray.getKeyValueOfanyTypeanyType().add(kv2);
-        KeyValueOfanyTypeanyType kv3 = new KeyValueOfanyTypeanyType();
-        kv3.setKey("UserID");
-        kv3.setValue(userid);//// 填具体的用户ID
-        contextarray.getKeyValueOfanyTypeanyType().add(kv3);
-        KeyValueOfanyTypeanyType kv4 = new KeyValueOfanyTypeanyType();
-        kv4.setKey("UserCode");
-        kv4.setValue(usercode);// 填具体的用户编码
-        contextarray.getKeyValueOfanyTypeanyType().add(kv4);
-        KeyValueOfanyTypeanyType kv5 = new KeyValueOfanyTypeanyType();
-        kv5.setKey("CultureName");
-        kv5.setValue("zh-CN");// 当前语种
-
-        contextarray.getKeyValueOfanyTypeanyType().add(kv5);
-
+        Map<Object, Object> map = DomainUtils.getContextMap(contextParam);
+        for (Entry<Object, Object> item : map.entrySet()) {
+            KeyValueOfanyTypeanyType kv = new KeyValueOfanyTypeanyType();
+            kv.setKey(item.getKey());
+            kv.setValue(item.getValue());//
+            contextarray.getKeyValueOfanyTypeanyType().add(kv);
+        }
         tc.setNameValueHas(contextarray);
         return tc;
-    }
-
-    private  org.ufida.entitydata.ArrayOfUFIDAU9ISVRCVDTOOBAReceivementDTOData createRCVList() {
-       ObjectFactory dataFactory = new ObjectFactory();
-        // 创建DTO集合，也就是参数要求的对象。
-        org.ufida.entitydata.ArrayOfUFIDAU9ISVRCVDTOOBAReceivementDTOData rcvDToArray = dataFactory
-                .createArrayOfUFIDAU9ISVRCVDTOOBAReceivementDTOData();
-        // DTO集合中的每个对象，都需要这样创建出来。
-        org.ufida.entitydata.UFIDAU9ISVRCVDTOOBAReceivementDTOData headerData = dataFactory.createUFIDAU9ISVRCVDTOOBAReceivementDTOData();// 表头赋值
-        headerData.setSysState(ObjectState.INSERTED);// “新建”标记符
-
-        // XMLGregorianCalendar timeValue = new GregorianCalendar();
-        GregorianCalendar gcal = new GregorianCalendar();
-        XMLGregorianCalendar timeValue;
-        try {
-            timeValue = DatatypeFactory.newInstance().newXMLGregorianCalendar(gcal);
-            timeValue.setYear(2019);
-            timeValue.setMonth(10);
-            timeValue.setDay(4);
-            timeValue.setHour(10);
-            timeValue.setMinute(35);
-            timeValue.setSecond(30);
-            System.out.println(timeValue.toString());
-            headerData.setMBusinessDate(timeValue); // 日期
-
-        } catch (DatatypeConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // 单据类型
-        UFIDAU9PMDTOsBESimp4UIDTOData docType = dataFactory.createUFIDAU9PMDTOsBESimp4UIDTOData();
-        docType.setMCode(dataFactory.createUFIDAU9PMDTOsBESimp4UIDTODataMCode("RCV01"));
-        docType.setSysState(ObjectState.INSERTED);
-        headerData.setMRcvDocType(dataFactory.createUFIDAU9ISVRCVDTOOBAReceivementDTODataMRcvDocType(docType));
-        // 供应商
-        UFIDAU9CBOSCMSupplierSupplierMISCInfoData sElement = dataFactory
-                .createUFIDAU9CBOSCMSupplierSupplierMISCInfoData();
-        sElement.setMCode(dataFactory.createUFIDAU9PMDTOsBESimp4UIDTODataMCode("XMJSWLKJ01"));
-        headerData.setMSupplier(dataFactory.createUFIDAU9PMRcvReceivementDataMSupplier(sElement));
-
-        // 对明细进行赋值
-        UFIDAU9ISVRCVDTOOBARcvLineDTOData detailsData = dataFactory.createUFIDAU9ISVRCVDTOOBARcvLineDTOData();
-        detailsData.setSysState(ObjectState.INSERTED);
-        detailsData.setMDocLineNo(10);// 行号
-        // 料品
-        UFIDAU9CBOSCMItemItemInfoData ItemInfoData = dataFactory.createUFIDAU9CBOSCMItemItemInfoData();
-        ItemInfoData.setMItemCode(dataFactory.createUFIDAU9CBOSCMItemItemInfoDataMItemCode("AA000001"));
-        ItemInfoData.setSysState(ObjectState.INSERTED);
-        detailsData.setMItemInfo(dataFactory.createUFIDAU9ISVRCVDTOOBARcvLineDTODataMItemInfo(ItemInfoData));// 料品
-        // 最终价
-        BigDecimal finallyPrice = new BigDecimal("3200");
-        detailsData.setMFinallyPriceTC(finallyPrice);
-        detailsData.setMPlanQtyTU(new BigDecimal("1"));
-        detailsData.setMArriveQtyTU(new BigDecimal("1"));
-
-        // 将明细的值放入头中
-        ArrayOfUFIDAU9ISVRCVDTOOBARcvLineDTOData m_m_detail = dataFactory
-                .createArrayOfUFIDAU9ISVRCVDTOOBARcvLineDTOData();
-        m_m_detail.getUFIDAU9ISVRCVDTOOBARcvLineDTOData().add(detailsData);
-        headerData.setMRcvLines(dataFactory.createUFIDAU9ISVRCVDTOOBAReceivementDTODataMRcvLines(m_m_detail));
-
-        // 注意：任何参数的类型只要不是最简单类型，都应该通过Factory来创建。
-        // 一般这个类型在哪个包中，Facotry也会在同样的包中有一个ObjectFacotry的类型
-        rcvDToArray.getUFIDAU9ISVRCVDTOOBAReceivementDTOData().add(headerData);
-        return rcvDToArray;
     }
 
 }

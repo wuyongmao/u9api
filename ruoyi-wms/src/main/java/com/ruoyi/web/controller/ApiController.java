@@ -7,7 +7,7 @@ import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.exception.ErrorInfoException;
 import com.ruoyi.utils.CommonUtils;
-import com.ruoyi.web.business.U9ApiBusiness;
+import com.ruoyi.web.request.CreateShipSVRequest;
 import com.ruoyi.web.vo.LoginValidVO;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -28,7 +28,7 @@ public class ApiController extends BaseController {
     public AjaxResult api(HttpServletRequest request) {
         String ipAddr = IpUtils.getIpAddr(ServletUtils.getRequest());
         System.out.println(ipAddr);
-        if(StringUtils.isBlank(ipAddr)){
+        if (StringUtils.isBlank(ipAddr)) {
             throw new ErrorInfoException("地址错误");
         }
         return AjaxResult.success(new ArrayList<>());
@@ -37,24 +37,28 @@ public class ApiController extends BaseController {
     @ApiOperation(value = "desc of method", notes = "")
     @GetMapping("/hello2")
     @ResponseBody
-    public Object hello2( /* 参数注解 */ @ApiParam(value = "desc of param" , required=true ) @RequestParam String name) {
+    public Object hello2( /* 参数注解 */ @ApiParam(value = "desc of param", required = true) @RequestParam String name) {
         return "Hello " + name + "!";
     }
+
     @ApiOperation(value = "desc of method", notes = "")
     @GetMapping("/hello")
     @ResponseBody
     public Object hello() {
-//        U9ApiBusiness u9ApiBusiness=new U9ApiBusiness();
-//        u9ApiBusiness.a();
-        CommonUtils.WriteLog("u9api","hello","request","start");
-        CommonUtils.WriteLog("u9api","hello","request","end");
-        return "Hello ";
+        CommonUtils.WriteLog("u9api", "hello", "request", "start");
+        CreateShipSVRequest request=new CreateShipSVRequest();
+
+//        request.doService();
+
+        CommonUtils.WriteLog("u9api", "hello", "response", "end");
+        return AjaxResult.success("Hello ");
     }
+
     @PostMapping("/valid")
     @ResponseBody
     public AjaxResult register(@Valid LoginValidVO validVO) {
-        U9ApiBusiness u9ApiBusiness=new U9ApiBusiness();
-        u9ApiBusiness.a();
+//        U9ApiBusiness u9ApiBusiness = new U9ApiBusiness();
+//        u9ApiBusiness.a();
         return AjaxResult.success();
     }
 
